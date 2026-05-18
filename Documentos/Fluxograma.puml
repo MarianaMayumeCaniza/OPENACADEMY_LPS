@@ -1,0 +1,45 @@
+@startuml
+header Sistema Bancário 
+title Fluxograma Sistema de Operação Bancario
+
+start
+
+:Inicializar Array de Contas;
+:Adicionar Admin (0000);
+
+label inicio
+repeat
+    partition "Autenticação" {
+        :Solicitar Número da Conta e Senha;
+        if (Credenciais existem e estão corretas?) then (Sim)
+            :Identificar Nível de Acesso;
+            if (É Admin?) then (Sim)
+                label admin_menu
+                :Menu Admin: Listar ou Remover;
+                if (Deseja Logout?) then (Sim)
+                    goto inicio
+                else (Não)
+                    goto admin_menu
+                endif
+            else (Usuário Comum)
+                label user_menu
+                :Menu Usuário: Saldo, Depósito, Transferência;
+                if (Deseja Logout?) then (Sim)
+                    goto inicio
+                else (Não)
+                    goto user_menu
+                endif
+            endif
+        else (Não/Erro)
+            :Exibir "Erro: Conta não encontrada ou Senha Inválida";
+            if (Deseja tentar novamente?) then (Sim)
+                ' Volta para o início do repeat automaticamente
+            else (Não / Encerrar)
+                :Encerrar Aplicativo;
+                stop
+            endif
+        endif
+    }
+repeat while (Sempre ativo)
+
+@enduml

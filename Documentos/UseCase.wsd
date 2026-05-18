@@ -1,0 +1,113 @@
+@startuml
+header Sistema Bancario - Mapeamento de Domínios
+title Diagrama de Casos de Uso do Aplicativo Mindfulness
+
+left to right direction
+skinparam actorStyle awesome
+
+
+' --- Ações do Sistema ---
+rectangle "Funcionalidades" #GhostWhite {
+    rectangle "Açoes Globais"  {
+    (Criar Conta) as (Open)
+    (Fazer Login) as (Login)
+    (Encerrar Aplicativo) as (Exit)
+}
+
+rectangle "Usuario" #line.dashed {
+    (Ver Saldo/Dados) as Consulta
+    (Depositar) as Depositar
+    (Transferir) as Transferir
+    (Retornar ao Menu) as Retornar
+    (Imprimir Extrato) as Print
+}
+
+rectangle "Adm" #line.dotted {
+    (Listar Relatório de Contas) as (List)
+    (Excluir Conta) as (Remove)
+    (Retornar ao Menu Gerente) as RetornarGer
+}
+
+    
+}
+
+
+
+package "Sistema Bancario" {
+    
+    ' Atribuições do Sistema geral
+    package "Global" #SlateGray {
+        usecase "UC 1: Fazer Login " as UC1
+        usecase "UC 2: Criar Conta" as UC2
+        usecase "UC 3: Encerrar Aplicativo" as UC3
+        usecase "UC 4: Validar Existencia Conta" as UC4
+        usecase "UC 5: Identificar Nivel" as UC5
+    } 
+
+    ' Casos de Uso do Aluno
+    package "UsuarioSistema" #Orchid {
+        usecase "UC 6: Ver Saldo/Dados" as UC6
+        usecase "UC 7: Depositar" as UC7
+        usecase " UC 8: Transferir" as UC8
+        usecase "UC 9: Retornar ao Menu" as UC9
+        usecase "UC 10: Imprimir Extrato" as UC10
+    }
+    ' Casos de Uso do Aluno
+    package "AdmSistema" #Salmon {
+        usecase "UC 11: Listar Relatório de Contas" as UC11
+        usecase "UC 12: Excluir Conta" as UC12
+        usecase " UC 13: Retornar ao Menu Gerente" as UC13
+}
+        
+}    
+    
+
+' --- Definição dos Atores ---
+actor "Admin" as Admin << Admin >>
+actor "Usuario" as User << User>>
+
+' --- Conexões (Relacionamentos) ---
+
+' Fluxo Global
+User --> UC1
+User --> UC2
+User --> UC3
+
+' O Login inclui validação e identificação de nível (Admin ou Comum)
+UC1 ..> UC4 : <<include>>
+UC1 ..> UC5 : <<include>>
+
+' Ações do Usuário Comum
+User --> UC6
+User --> UC7
+User --> UC8
+User --> UC9
+User --> UC10
+
+' Ações do Administrador
+Admin --> UC1
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+
+' Herança: O Admin também consegue acessar funções de usuário se necessário
+Admin -up-|> User
+
+' --- Notas de Regras de Negócio ---
+note right of UC4
+  **Regra Swift:**
+  Tratar opcionais com 
+  if let ou guard (sem !)
+end note
+
+note right of UC8
+  **Regra de Transação:**
+  Uso de inout para modificar 
+  o saldo no array original.
+end note
+
+
+' --- Notas de Regras de Negócio ---
+
+
+@enduml
